@@ -5,7 +5,7 @@
 - [Timing-Based Browsing Privacy Vulnerabilities Via Site Isolation](https://www.microsoft.com/en-us/research/uploads/prod/2021/10/SiteIsolationTimingChannel-cam-ready-2.pdf)
 
 - [Timing-Based Browsing Privacy Vulnerabilities Via Site Isolation - Youtube)](https://youtu.be/e8VumSQUASI)
-  - Vulnerable version: 68~84
+  - Vulnerable version: 68~87
 
 ## Resources
 
@@ -18,3 +18,14 @@
 
 1. Download the vulnerable Chromium version (The experiment in the study use the Chrome 87 on windows 10)
 2. Open the `index.html` with the Chromium
+
+## ChangeLog
+
+Functions (based on p5 Listing2: The attack algorithm in pseudo code):
+
+- [x] load_baseline_results()
+- [x] relative_time = equation_one(vtm_site)
+- [x] create_invisible_iframe(vtm_site)
+- [x] save_baseline_results(r_np, r_bg)
+- [ ] DELTA
+- [ ] a_1, b_1, a_2, b_2 = calculate_SVM_params(r_np, r_bg)
