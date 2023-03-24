@@ -11,5 +11,5 @@
 
 - [Downloading old builds of Chrome / Chromium](https://www.chromium.org/getting-involved/download-chromium/)
 
-  - [Chromium 101 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/982303/)
   - [Chromium 74 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/638880/)
+  - [Chromium 72 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/612451/)

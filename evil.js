@@ -1,14 +1,18 @@
 const invisible_div = document.getElementById("invisible");
 const form = document.getElementById("monitor");
-const ref_site_2 = "https://sv.cmu.edu/";
-const ref_site_1 = "https://getbootstrap.com/";
+const ref_site_1 = "https://sv.cmu.edu/";
+const ref_site_2 = "https://getbootstrap.com/";
 
+const result = document.getElementById("result");
+window.addEventListener("DOMContentLoaded", async function (event) {
+  const { r_np, r_bg } = await load_baseline_result();
+  save_baseline_results(r_np, r_bg);
+  console.log("baseline result saved in cookie:", document.cookie);
+  result.append(`baseline result saved in cookie: ${document.cookie}`);
+});
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
   // const vtm_site = form.site.value;
-  const { r_np, r_bg } = await load_baseline_result();
-  // console.log("vtm_site");
-  console.log("r_np, r_bg ", r_np, r_bg);
 });
 
 async function equation_one(tg_url) {
@@ -26,7 +30,7 @@ async function equation_one(tg_url) {
   const tg = "tg";
   create_invisible_iframe(tg);
   const tg_frame = document.getElementById(tg);
-  document.getElementById(tg).addEventListener("load", () => {
+  tg_frame.addEventListener("load", () => {
     time_vtm = performance.now();
   });
   await loadURLonFrame(ref_site_1, ref_frame_1);
@@ -47,7 +51,14 @@ async function equation_one(tg_url) {
 
 async function load_baseline_result() {
   const { r: r_np } = await equation_one(ref_site_2);
+
   await awaitReset();
+
+  const pre_f2 = "pre_f2";
+  create_invisible_iframe(pre_f2);
+  await loadURLonFrame(ref_site_2, document.getElementById(pre_f2));
+  await awaitEvent(document.getElementById(pre_f2), "load");
+
   const { r: r_bg } = await equation_one(ref_site_2);
   return { r_np, r_bg };
 }
@@ -84,4 +95,9 @@ function awaitEvent(element, eventName) {
       { once: true }
     );
   });
+}
+
+function save_baseline_results(r_np, r_bg) {
+  document.cookie = `r_np=${r_np}`;
+  document.cookie = `r_bg=${r_bg}`;
 }
