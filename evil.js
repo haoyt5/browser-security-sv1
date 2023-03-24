@@ -1,15 +1,17 @@
 const invisible_div = document.getElementById("invisible");
 const form = document.getElementById("monitor");
+const result = document.getElementById("result");
+
 const ref_site_1 = "https://sv.cmu.edu/";
 const ref_site_2 = "https://getbootstrap.com/";
 
-const result = document.getElementById("result");
 window.addEventListener("DOMContentLoaded", async function (event) {
   const { r_np, r_bg } = await load_baseline_result();
   save_baseline_results(r_np, r_bg);
   console.log("baseline result saved in cookie:", document.cookie);
   result.append(`baseline result saved in cookie: ${document.cookie}`);
 });
+
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
   // const vtm_site = form.site.value;
@@ -49,6 +51,61 @@ async function equation_one(tg_url) {
   return { time_0, time_ref, time_vtm, r };
 }
 
+async function equation_two(tg_url) {
+  let time_0 = performance.now();
+  let time_ref;
+  let time_vtm;
+  let time_vtm_2;
+  let r;
+
+  const ref_1 = "ref_1";
+  create_invisible_iframe(ref_1);
+  const ref_frame_1 = document.getElementById(ref_1);
+  ref_frame_1.addEventListener("load", () => {
+    time_ref = performance.now();
+  });
+  await loadURLonFrame(ref_site_1, ref_frame_1);
+  await awaitEvent(ref_frame_1, "load");
+
+  const tg = "tg";
+  create_invisible_iframe(tg);
+  const tg_frame = document.getElementById(tg);
+  tg_frame.addEventListener("load", () => {
+    time_vtm = performance.now();
+  });
+
+  const tg_2 = "tg_2";
+  create_invisible_iframe(tg_2);
+  const tg_frame_2 = document.getElementById(tg_2);
+  tg_frame.addEventListener("load", () => {
+    time_vtm_2 = performance.now();
+  });
+
+  tg_frame.setAttribute("src", `${tg_url}:1`);
+  tg_frame_2.setAttribute("src", `${tg_url}:1`);
+
+  await awaitEvent(tg_frame, "load");
+  await awaitEvent(tg_frame_2, "load");
+  vtm_t = time_vtm - time_ref;
+  vtm_t_2 = time_vtm_2 - time_ref;
+
+  r = (vtm_t_2 - vtm_t) / vtm_t;
+
+  console.log(
+    "[equation_two]: {time_0, time_ref, time_vtm, time_vtm_2,vtm_t , vtm_t_2, r}",
+    {
+      time_0,
+      time_ref,
+      time_vtm,
+      time_vtm_2,
+      vtm_t,
+      vtm_t_2,
+      r,
+    }
+  );
+  return { time_0, time_ref, time_vtm, r };
+}
+
 async function load_baseline_result() {
   const { r: r_np } = await equation_one(ref_site_2);
 
@@ -60,6 +117,7 @@ async function load_baseline_result() {
   await awaitEvent(document.getElementById(pre_f2), "load");
 
   const { r: r_bg } = await equation_one(ref_site_2);
+
   return { r_np, r_bg };
 }
 
@@ -68,6 +126,7 @@ function create_invisible_iframe(id) {
   inv_iframe.setAttribute("id", id);
   invisible_div.appendChild(inv_iframe);
 }
+
 /*
 loading a URL: loading a URL with an unsafe port(port1, 22, 23, 24)
 victim_site.com = vtm
