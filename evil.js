@@ -1,20 +1,50 @@
 const invisible_div = document.getElementById("invisible");
 const form = document.getElementById("monitor");
 const result = document.getElementById("result");
+const submit_button = document.getElementById("submit-btn");
 
 const ref_site_1 = "https://sv.cmu.edu/";
 const ref_site_2 = "https://getbootstrap.com/";
+
+function appendTextNode(text, element) {
+  const textNode = document.createElement("div");
+  textNode.textContent = text;
+  element.appendChild(textNode);
+}
+function now() {
+  return new Date().toTimeString().substring(0, 8);
+}
 
 window.addEventListener("DOMContentLoaded", async function (event) {
   const { r_np, r_bg } = await load_baseline_result();
   save_baseline_results(r_np, r_bg);
   console.log("baseline result saved in cookie:", document.cookie);
-  result.append(`baseline result saved in cookie: ${document.cookie}`);
+  /* temporary print function */
+  appendTextNode(`baseline result saved in cookie: ${document.cookie}`, result);
+  submit_button.removeAttribute("disabled");
 });
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
-  // const vtm_site = form.site.value;
+  const vtm_site = form.site.value;
+
+  /* temporary print function */
+  appendTextNode(
+    `\n[monitor]: monitor the target site: ${vtm_site} for 10 seconds; start time ${now()}`,
+    result
+  );
+
+  appendTextNode(`\n[monitor]　　r_vtm　　　time  `, result);
+
+  const intervalId = setInterval(async function () {
+    await awaitReset();
+    const { r: r_vtm } = await equation_one(vtm_site);
+    appendTextNode(`\n[monitor]　　${r_vtm.toFixed(6)}　　　${now()} `, result);
+  }, 1000);
+
+  setTimeout(async function () {
+    await clearInterval(intervalId);
+  }, 10000);
 });
 
 async function equation_one(tg_url) {
@@ -42,12 +72,12 @@ async function equation_one(tg_url) {
 
   r = (time_vtm - time_ref) / (time_ref - time_0);
 
-  console.log("[equation_one]: {time_0, time_ref, time_vtm, r}", {
-    time_0,
-    time_ref,
-    time_vtm,
-    r,
-  });
+  // console.log("[equation_one]: {time_0, time_ref, time_vtm, r}", {
+  //   time_0,
+  //   time_ref,
+  //   time_vtm,
+  //   r,
+  // });
   return { time_0, time_ref, time_vtm, r };
 }
 
@@ -91,18 +121,18 @@ async function equation_two(tg_url) {
 
   r = (vtm_t_2 - vtm_t) / vtm_t;
 
-  console.log(
-    "[equation_two]: {time_0, time_ref, time_vtm, time_vtm_2,vtm_t , vtm_t_2, r}",
-    {
-      time_0,
-      time_ref,
-      time_vtm,
-      time_vtm_2,
-      vtm_t,
-      vtm_t_2,
-      r,
-    }
-  );
+  // console.log(
+  //   "[equation_two]: {time_0, time_ref, time_vtm, time_vtm_2,vtm_t , vtm_t_2, r}",
+  //   {
+  //     time_0,
+  //     time_ref,
+  //     time_vtm,
+  //     time_vtm_2,
+  //     vtm_t,
+  //     vtm_t_2,
+  //     r,
+  //   }
+  // );
   return { time_0, time_ref, time_vtm, r };
 }
 
