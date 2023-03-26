@@ -14,6 +14,10 @@
   - [Chromium 74 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/638880/)
   - [Chromium 72 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/612451/)
 
+-[Alexa Top 1 Million Sites](https://gist.github.com/chilts/7229605)
+
+- [Umbrella Popularity List - most queried domains based on passive DNS usage across Cisco Umbrella global network ](https://s3-us-west-1.amazonaws.com/umbrella-static/index.html)
+
 ## How to run the website
 
 1. Download the vulnerable Chromium version (The experiment in the study use the Chrome 87 on windows 10)
