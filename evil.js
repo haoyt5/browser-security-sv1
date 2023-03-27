@@ -187,6 +187,6 @@ function awaitEvent(element, eventName) {
 }
 
 function save_baseline_results(r_np, r_bg) {
-  document.cookie = `r_np=${r_np}`;
   document.cookie = `r_bg=${r_bg}`;
+  document.cookie = `r_np=${r_np}`;
 }
