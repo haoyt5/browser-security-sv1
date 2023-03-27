@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Attacker's Website</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+</head>
+<body>
+  <div class="container p-4">
+    <h3 class="mb-3">Monitor Target</h3>
+    <form id="monitor" action="submit">
+      <div class="mb-3">
+        foreground tab (FG), in a background tab (BG), or not present (NP)
+      </div>
+      <div class="mb-3">
+        <label for="site" class="form-label">Target Victim Site:</label>
+        <select id="site" name="site" class="form-select">
+          <option value="https://lodash.com/">https://lodash.com/</option>
+        </select>
+      </div>
+      <div class="text-end">
+        <button id="submit-btn" type="submit" class="btn btn-outline-primary" disabled="true">Start to monitor</button>
+      </div>
+    </form>
+    <div id="result"></div>
+    <iframe class="d-none" src="https://sv.cmu.edu/" frameborder="0"></iframe>
+    <div class="d-none" id="invisible">
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='evil.js') }}"></script>
+</body>
+</html>
