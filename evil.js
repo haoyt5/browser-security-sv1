@@ -35,16 +35,18 @@ form.addEventListener("submit", async function (e) {
   );
 
   appendTextNode(`\n[monitor]　　r_vtm　　　time  `, result);
+  const { r: r_vtm } = await equation_one(vtm_site);
+  appendTextNode(`\n[monitor]　　${r_vtm.toFixed(6)}　　　${now()} `, result);
 
-  const intervalId = setInterval(async function () {
-    await awaitReset();
-    const { r: r_vtm } = await equation_one(vtm_site);
-    appendTextNode(`\n[monitor]　　${r_vtm.toFixed(6)}　　　${now()} `, result);
-  }, 1000);
+  // const intervalId = setInterval(async function () {
+  //   await awaitReset();
+  //   const { r: r_vtm } = await equation_one(vtm_site);
+  //   appendTextNode(`\n[monitor]　　${r_vtm.toFixed(6)}　　　${now()} `, result);
+  // }, 1000);
 
-  setTimeout(async function () {
-    await clearInterval(intervalId);
-  }, 10000);
+  // setTimeout(async function () {
+  //   await clearInterval(intervalId);
+  // }, 10000);
 });
 
 async function equation_one(tg_url) {
@@ -163,7 +165,7 @@ victim_site.com = vtm
 */
 function loadURLonFrame(url, frame) {
   return new Promise((resolve) => {
-    frame.setAttribute("src", `${url}:1`);
+    frame.setAttribute("src", `${url}`); // :1 port deleted
     resolve();
   });
 }
