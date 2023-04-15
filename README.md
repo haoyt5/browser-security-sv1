@@ -18,6 +18,11 @@
 
 - [Cisco Umbrella Popularity List ](https://s3-us-west-1.amazonaws.com/umbrella-static/index.html) - most queried domains based on passive DNS usage across Cisco Umbrella global network
 
+## Dataset
+
+1. Cisco rank, loading time, loading time from case 1, bg/fg
+2. Cisco rank, loading time, loading time from case 2, np/fg
+
 ## How to run the website
 
 1. Download the vulnerable Chromium version (The experiment in the study use the Chrome 87 on windows 10)
@@ -46,8 +51,8 @@
    2. Run the script
 
    ```bash
-   export FLASK_APP=get_svm.py
-   flask run
+   export FLASK_APP=get_svm.py TEMPLATES_AUTO_RELOAD=true
+   flask run --debug
    ```
 
    3. Visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
