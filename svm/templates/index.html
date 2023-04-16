@@ -14,18 +14,23 @@
       <div class="mb-3">
         foreground tab (FG), in a background tab (BG), or not present (NP)
       </div>
+      <div class="mb-3 w-100">
+        <h6 class=" text-dark fw-bolder">Baseline</h6>
+        <div id="result" style="height: 24px;">
+        </div>
+      </div>
+
       <div class="mb-3">
-        <label for="site" class="form-label">Target Victim Site:</label>
+        <label for="site" class="form-label text-dark fw-bolder">Target Victim Site:</label>
         <select id="site" name="site" class="form-select">
-          <option value="https://lodash.com/">https://lodash.com/</option>
         </select>
       </div>
       <div class="text-end">
         <button id="submit-btn" type="submit" class="btn btn-outline-primary" disabled="true">Start to monitor</button>
       </div>
     </form>
-    <div id="result"></div>
     <div id="monitor-table">
+      <h6 class=" text-dark fw-bolder">Monitor Results</h6>
       <table class="table table-striped">
         <thead>
           <tr>

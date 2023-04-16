@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from sklearn.svm import SVC
 
 app = Flask(__name__)
@@ -12,6 +12,11 @@ def calculate_SVM_params():
     # TODO: return a, b as json file
 
     return 
+
+@app.route('/top-300.csv')
+def serve_top_300():
+    return send_from_directory('static', 'top-300.csv')
+
 
 @app.route('/')
 def index():

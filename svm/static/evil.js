@@ -2,6 +2,8 @@ const invisible_div = document.getElementById("invisible");
 const form = document.getElementById("monitor");
 const result = document.getElementById("result");
 const submit_button = document.getElementById("submit-btn");
+const resultTable = document.getElementById("monitor-results");
+const siteSelect = document.getElementById("site");
 
 const ref_site_1 = "https://sv.cmu.edu/";
 const ref_site_2 = "https://getbootstrap.com/";
@@ -11,11 +13,22 @@ function appendTextNode(text, element) {
   textNode.textContent = text;
   element.appendChild(textNode);
 }
+
+function appendOptionNode(data, tg_element) {
+  const { site, rank } = data;
+  const optionNode = document.createElement("option");
+  optionNode.setAttribute("value", site);
+  optionNode.setAttribute("data-rank", rank);
+  optionNode.textContent = site;
+  tg_element.appendChild(optionNode);
+}
+
 function now() {
   return new Date().toTimeString().substring(0, 8);
 }
 
 window.addEventListener("DOMContentLoaded", async function (event) {
+  await fetchAndRenderOptions();
   const { r_np, r_bg } = await load_baseline_result();
   save_baseline_results(r_np, r_bg);
   console.log("baseline result saved in cookie:", document.cookie);
@@ -72,12 +85,6 @@ async function equation_one(tg_url) {
 
   r = (time_vtm - time_ref) / (time_ref - time_0);
 
-  // console.log("[equation_one]: {time_0, time_ref, time_vtm, r}", {
-  //   time_0,
-  //   time_ref,
-  //   time_vtm,
-  //   r,
-  // });
   return { time_0, time_ref, time_vtm, r };
 }
 
@@ -189,4 +196,25 @@ function awaitEvent(element, eventName) {
 function save_baseline_results(r_np, r_bg) {
   document.cookie = `r_bg=${r_bg}`;
   document.cookie = `r_np=${r_np}`;
+}
+
+async function fetchAndRenderOptions() {
+  try {
+    // fetch top-300
+    const response = await fetch("top-300.csv");
+    const csv = await response.text();
+    const rows = csv.split("\n");
+    let data = [];
+
+    for (let i = 0; i <= rows.length; i++) {
+      let cols = rows[i].split(",");
+      const item = await { rank: cols[0], site: cols[1] };
+      // parse csv to js object array
+      data.push(item);
+      // parse csv to append on select
+      appendOptionNode({ rank: cols[0], site: cols[1] }, siteSelect);
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
 }
