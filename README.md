@@ -101,3 +101,5 @@ Functions (based on p5 Listing2: The attack algorithm in pseudo code):
      env\Scripts\activate.bat
      pip install -r requirements.txt
      ```
+
+5. Run the script. `python run_collect.py`
