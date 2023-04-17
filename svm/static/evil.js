@@ -23,6 +23,22 @@ function appendOptionNode(data, tg_element) {
   tg_element.appendChild(optionNode);
 }
 
+function appendTableRow(data, tg_element) {
+  const { site, rank, r_time, case_type, label } = data;
+  const tr = document.createElement("tr");
+  tr.setAttribute(
+    "data-info",
+    `site=${site},rank=${rank},r_time=${r_time},case=${case_type},label=${label}`
+  );
+  const tds = [, site, rank, r_time, case_type, label];
+  for (const item of tds) {
+    let td = document.createElement("td");
+    td.textContent = item;
+    tr.appendChild(td);
+  }
+  tg_element.appendChild(tr);
+}
+
 function now() {
   return new Date().toTimeString().substring(0, 8);
 }
@@ -40,24 +56,18 @@ window.addEventListener("DOMContentLoaded", async function (event) {
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
   const vtm_site = form.site.value;
+  const vtm_option = form.site.options[form.site.selectedIndex];
+  const vtm_rank = vtm_option.getAttribute("data-rank");
 
-  /* temporary print function */
-  appendTextNode(
-    `\n[monitor]: monitor the target site: ${vtm_site} for 10 seconds; start time ${now()}`,
-    result
-  );
-
-  appendTextNode(`\n[monitor]　　r_vtm　　　time  `, result);
-
-  const intervalId = setInterval(async function () {
-    await awaitReset();
-    const { r: r_vtm } = await equation_one(vtm_site);
-    appendTextNode(`\n[monitor]　　${r_vtm.toFixed(6)}　　　${now()} `, result);
-  }, 1000);
-
-  setTimeout(async function () {
-    await clearInterval(intervalId);
-  }, 10000);
+  const { r: r_vtm } = await equation_one(vtm_site);
+  const data = {
+    site: vtm_site,
+    rank: vtm_rank,
+    r_time: r_vtm,
+    case_type: "1",
+    label: "np",
+  };
+  appendTableRow(data, resultTable);
 });
 
 async function equation_one(tg_url) {
@@ -118,8 +128,8 @@ async function equation_two(tg_url) {
     time_vtm_2 = performance.now();
   });
 
-  tg_frame.setAttribute("src", `${tg_url}:1`);
-  tg_frame_2.setAttribute("src", `${tg_url}:1`);
+  tg_frame.setAttribute("src", `${tg_url}`);
+  tg_frame_2.setAttribute("src", `${tg_url}`);
 
   await awaitEvent(tg_frame, "load");
   await awaitEvent(tg_frame_2, "load");
@@ -170,7 +180,7 @@ victim_site.com = vtm
 */
 function loadURLonFrame(url, frame) {
   return new Promise((resolve) => {
-    frame.setAttribute("src", `${url}:1`);
+    frame.setAttribute("src", `${url}`);
     resolve();
   });
 }
