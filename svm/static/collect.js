@@ -2,6 +2,19 @@
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
 
+function postRecord(record) {
+  return new Promise(async (resolve) => {
+    const result = await fetch("/logs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ record }),
+    });
+    resolve();
+  });
+}
+
 setTimeout(async () => {
   const R_BG = result.getAttribute("data-r_bg");
   const R_NP = result.getAttribute("data-r_np");
@@ -16,7 +29,7 @@ setTimeout(async () => {
 function clickAllOptions() {
   return new Promise((resolve) => {
     const options = siteSelect.options;
-    for (let i = 0; i < options.length; i++) {
+    for (let i = 0; i < 10; i++) {
       siteSelect.value = siteSelect.options[i].value;
       submitButton.click();
     }
@@ -26,13 +39,14 @@ function clickAllOptions() {
 
 function collectResults() {
   return new Promise((resolve) => {
-    setTimeout(() => {
+    setTimeout(async () => {
       const rows = monitorResultTable.getElementsByTagName("tr");
       for (let i = 0; i < rows.length; i++) {
         let data = rows[i].getAttribute("data-info");
+        await postRecord(data);
         console.log(data);
       }
-    }, 30000);
+    }, 5000);
     resolve();
   });
 }
