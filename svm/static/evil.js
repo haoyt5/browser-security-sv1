@@ -5,13 +5,28 @@ const submit_button = document.getElementById("submit-btn");
 const resultTable = document.getElementById("monitor-results");
 const siteSelect = document.getElementById("site");
 
-const ref_site_1 = "https://sv.cmu.edu/";
-const ref_site_2 = "https://getbootstrap.com/";
+const ref_site_1 = "https://sv.cmu.edu:1";
+const ref_site_2 = "https://getbootstrap.com:1";
+
+function getDelta(r_bg, r_np) {
+  console.log(r_bg, r_np, (r_np - r_bg) / 10);
+  return (r_np - r_bg) / 10;
+}
 
 function appendTextNode(text, element) {
   const textNode = document.createElement("div");
   textNode.textContent = text;
   element.appendChild(textNode);
+}
+function appendBaselineResult(text) {
+  const textDiv = document.createElement("div");
+  textDiv.textContent = text;
+  result.setAttribute("data-info", text);
+  result.setAttribute("data-r_bg", text.split(",")[0].split("=")[1]);
+  result.setAttribute("data-r_np", text.split(",")[1].split("=")[1]);
+  result.setAttribute("data-label", "np");
+  result.setAttribute("data-case", "0");
+  result.appendChild(textDiv);
 }
 
 function appendOptionNode(data, tg_element) {
@@ -24,13 +39,13 @@ function appendOptionNode(data, tg_element) {
 }
 
 function appendTableRow(data, tg_element) {
-  const { site, rank, r_time, case_type, label } = data;
+  const { site, rank, r_time, case_type, label, r_time_two } = data;
   const tr = document.createElement("tr");
   tr.setAttribute(
     "data-info",
-    `site=${site},rank=${rank},r_time=${r_time},case=${case_type},label=${label}`
+    `site=${site},rank=${rank},r_time=${r_time}, r_time_eq2=${r_time_two},case=${case_type},label=${label}`
   );
-  const tds = [, site, rank, r_time, case_type, label];
+  const tds = [, site, rank, r_time, r_time_two, case_type, label];
   for (const item of tds) {
     let td = document.createElement("td");
     td.textContent = item;
@@ -46,10 +61,12 @@ function now() {
 window.addEventListener("DOMContentLoaded", async function (event) {
   await fetchAndRenderOptions();
   const { r_np, r_bg } = await load_baseline_result();
+  console.log("r_np, r_bg", r_np, r_bg);
   save_baseline_results(r_np, r_bg);
   console.log("baseline result saved in cookie:", document.cookie);
-  /* temporary print function */
-  appendTextNode(`baseline result saved in cookie: ${document.cookie}`, result);
+
+  const baseline = `r_bg=${r_bg},r_np=${r_np}`;
+  appendBaselineResult(baseline);
   submit_button.removeAttribute("disabled");
 });
 
@@ -58,14 +75,34 @@ form.addEventListener("submit", async function (e) {
   const vtm_site = form.site.value;
   const vtm_option = form.site.options[form.site.selectedIndex];
   const vtm_rank = vtm_option.getAttribute("data-rank");
-
   const { r: r_vtm } = await equation_one(vtm_site);
+  const { r } = await equation_two(vtm_site);
+  const r_time_two = r;
+  let case_type = result.getAttribute("data-case");
+  let label = result.getAttribute("data-label");
+
+  // const r_np = result.getAttribute("data-r_np");
+  // const r_bg = result.getAttribute("data-r_bg");
+  // const delta = getDelta(r_bg, r_np);
+  // console.log("Math.abs(r_bg - r_np)", Math.abs(r_bg - r_np));
+  // console.log("Math.abs(r_vtm - r_bg)", Math.abs(r_vtm - r_bg));
+  // console.log("Math.abs(r_vtm - r_np)", Math.abs(r_vtm - r_np));
+  // if (Math.abs(r_vtm - r_bg) < delta) {
+  //   // decide fg or bg
+  //   case_type = "1";
+  //   label = "fg/bg";
+  // } else if (Math.abs(r_vtm - r_np) < delta) {
+  //   // decide fg or np
+  //   case_type = "2";
+  //   label = "fg/np";
+  // }
   const data = {
     site: vtm_site,
     rank: vtm_rank,
     r_time: r_vtm,
-    case_type: "1",
-    label: "np",
+    case_type,
+    label,
+    r_time_two,
   };
   appendTableRow(data, resultTable);
 });
@@ -127,10 +164,10 @@ async function equation_two(tg_url) {
   tg_frame.addEventListener("load", () => {
     time_vtm_2 = performance.now();
   });
-
-  tg_frame.setAttribute("src", `${tg_url}`);
-  tg_frame_2.setAttribute("src", `${tg_url}`);
-
+  tg_frame.setAttribute("src", "");
+  tg_frame_2.setAttribute("src", "");
+  tg_frame.setAttribute("src", tg_url);
+  tg_frame_2.setAttribute("src", tg_url);
   await awaitEvent(tg_frame, "load");
   await awaitEvent(tg_frame_2, "load");
   vtm_t = time_vtm - time_ref;
