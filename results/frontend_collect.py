@@ -27,7 +27,7 @@ sites = site_dropdown.find_elements(By.TAG_NAME, "option")
 
 # Iterate over each site, selecting it and clicking the submit button
 results = []
-for i in range(81,len(sites)):
+for i in range(295,len(sites)):
     site_dropdown = driver.find_element(By.ID, "site")
     site_dropdown.click()
     sites[i].click()
