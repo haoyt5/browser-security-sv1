@@ -16,7 +16,7 @@ setTimeout(async () => {
 function clickAllOptions() {
   return new Promise((resolve) => {
     const options = siteSelect.options;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < options.length; i++) {
       siteSelect.value = siteSelect.options[i].value;
       submitButton.click();
     }
@@ -30,7 +30,7 @@ function collectResults() {
       const rows = monitorResultTable.getElementsByTagName("tr");
       for (let i = 0; i < rows.length; i++) {
         let data = rows[i].getAttribute("data-info");
-        console.log("rows", data);
+        console.log(data);
       }
     }, 30000);
     resolve();
