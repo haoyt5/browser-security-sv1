@@ -10,7 +10,7 @@
 ## Resources
 
 - [Downloading old builds of Chrome / Chromium](https://www.chromium.org/getting-involved/download-chromium/)
-
+  - [Chromium 87 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/812851/)
   - [Chromium 74 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/638880/)
   - [Chromium 72 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/612451/)
 
@@ -52,10 +52,10 @@
 
    ```bash
    export FLASK_APP=get_svm.py TEMPLATES_AUTO_RELOAD=true
-   flask run --debug
+   flask run --debug --host=0.0.0.0 --port=8080
    ```
 
-   3. Visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+   3. Visit [http://localhost:8080/](http://localhost:8080/)
 
 ## ChangeLog
 
@@ -67,3 +67,39 @@ Functions (based on p5 Listing2: The attack algorithm in pseudo code):
 - [x] save_baseline_results(r_np, r_bg)
 - [ ] DELTA
 - [ ] a_1, b_1, a_2, b_2 = calculate_SVM_params(r_np, r_bg)
+
+## How to conduct the data collection script
+
+1. Download ChromeDriver from https://chromedriver.storage.googleapis.com/index.html?path=72.0.3626.69/. Download the version 72
+
+2. Extract the "chromedriver" executable and put it somewhere (for example,
+   the current directory). If running Mac OS, you will need to allow this
+   executable to run in the security settings since it is unsigned.
+3. Add the directory containing the "chromedriver" executable to
+   your PATH. If you put it in the current directory, then you can use the
+   following the commands to do this:
+
+   - In bash/zsh: `export PATH=$PWD:$PATH`
+   - In Windows cmd.exe: `set PATH=%CD%;%PATH%`
+   - e.g. `export PATH=$PWD:$PATH`
+
+4. Assuming you have Python 3 installed, create a virtual environment and
+   install the Python dependencies:
+
+   - In bash/zsh:
+
+     ```bash
+     python3 -m venv env
+     source env/bin/activate
+     pip install -r requirements.txt
+     ```
+
+   - In Windows cmd.exe:
+
+     ```
+     py -3 -m venv env
+     env\Scripts\activate.bat
+     pip install -r requirements.txt
+     ```
+
+5. Run the script. `python run_collect.py`
