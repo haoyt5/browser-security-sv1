@@ -1,6 +1,14 @@
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}
+
 function postRecord(record) {
   return new Promise(async (resolve) => {
     const result = await fetch("/logs", {
@@ -18,10 +26,15 @@ setTimeout(async () => {
   const R_BG = result.getAttribute("data-r_bg");
   const R_NP = result.getAttribute("data-r_np");
   if (R_BG < R_NP) {
+    // FEATURE: Collect Script
     // await collectNP();
+    // await sleep(500);
     // await collectFG();
-    await collectBG();
-    await collectResults();
+    // await sleep(500);
+    // await collectBG();
+    // await sleep(500);
+    // console.log("Start To Collect");
+    // await collectResults();
   } else {
     location.reload();
   }
@@ -39,17 +52,20 @@ function clickAllOptions() {
 }
 
 function closeTab(opened) {
-  setTimeout(() => {
-    opened.close();
-  }, 300);
-}
-function openTab(url) {
   return new Promise((resolve) => {
+    setTimeout(() => {
+      opened.close();
+    }, 300);
+    return resolve();
+  });
+}
+
+function openTab(url) {
+  return new Promise(async (resolve) => {
     if (url === null) {
-      console.log("empty");
       let empty = window.open();
       empty.focus();
-      closeTab(empty);
+      await closeTab(empty);
       return resolve();
     }
     let newWindow = window.open(
@@ -58,7 +74,7 @@ function openTab(url) {
       "toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes"
     );
     newWindow.focus();
-    closeTab(newWindow);
+    await closeTab(newWindow);
     return resolve();
   });
 }
@@ -71,7 +87,6 @@ function openInNewAndClickAllOptions() {
         await openTab(url);
         siteSelect.value = siteSelect.options[i].value;
         submitButton.click();
-        // resolve();
       }, 800);
     }
 
@@ -97,27 +112,38 @@ function openInNewAndEmptyClickAllOptions() {
 
 function collectResults() {
   return new Promise((resolve) => {
+    const wait = 3 * 60 * 1000;
     setTimeout(async () => {
       const rows = monitorResultTable.getElementsByTagName("tr");
       for (let i = 0; i < rows.length; i++) {
         let data = rows[i].getAttribute("data-info");
         await postRecord(data);
       }
-    }, 80000);
+    }, wait);
     resolve();
   });
 }
 
+function setDataLabelAttribute(label) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      result.setAttribute("data-label", label);
+    }, 1000);
+    resolve();
+  });
+}
 function collectNP() {
   return new Promise(async (resolve) => {
-    result.setAttribute("data-label", "np");
+    await setDataLabelAttribute("np");
+    await sleep(500);
     await clickAllOptions();
     resolve();
   });
 }
 function collectBG() {
   return new Promise(async (resolve) => {
-    result.setAttribute("data-label", "bg");
+    await setDataLabelAttribute("bg");
+    await sleep(500);
     await openInNewAndEmptyClickAllOptions();
     resolve();
   });
@@ -125,7 +151,8 @@ function collectBG() {
 
 function collectFG() {
   return new Promise(async (resolve) => {
-    result.setAttribute("data-label", "fg");
+    await setDataLabelAttribute("fg");
+    await sleep(500);
     await openInNewAndClickAllOptions();
     resolve();
   });
