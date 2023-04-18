@@ -1,22 +1,13 @@
 // const result = document.getElementById("result");
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
+
 setTimeout(async () => {
   const R_BG = result.getAttribute("data-r_bg");
   const R_NP = result.getAttribute("data-r_np");
   if (R_BG < R_NP) {
-    // console.log("start to collect");
     await collectNP();
-    // await collectResults();
-    const rows = monitorResultTable.getElementsByTagName("tr");
-    console.log(
-      rows,
-      rows[0],
-      monitorResultTable.getElementsByTagName("tr")[0]
-    );
-    for (let i = 0; i < 10; i++) {
-      console.log("rows", rows.item(i));
-    }
+    await collectResults();
   } else {
     location.reload();
   }
@@ -32,15 +23,20 @@ function clickAllOptions() {
     resolve();
   });
 }
+
 function collectResults() {
   return new Promise((resolve) => {
-    const rows = monitorResultTable.getElementsByTagName("tr");
-    for (let i = 0; i < 10; i++) {
-      console.log("rows", rows[0].getAttribute("data-info"));
-    }
+    setTimeout(() => {
+      const rows = monitorResultTable.getElementsByTagName("tr");
+      for (let i = 0; i < rows.length; i++) {
+        let data = rows[i].getAttribute("data-info");
+        console.log("rows", data);
+      }
+    }, 30000);
     resolve();
   });
 }
+
 function collectNP() {
   return new Promise(async (resolve) => {
     result.setAttribute("data-label", "np");
