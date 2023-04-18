@@ -29,7 +29,7 @@ setTimeout(async () => {
 function clickAllOptions() {
   return new Promise((resolve) => {
     const options = siteSelect.options;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < options.length; i++) {
       siteSelect.value = siteSelect.options[i].value;
       submitButton.click();
     }
@@ -44,9 +44,8 @@ function collectResults() {
       for (let i = 0; i < rows.length; i++) {
         let data = rows[i].getAttribute("data-info");
         await postRecord(data);
-        console.log(data);
       }
-    }, 5000);
+    }, 10000);
     resolve();
   });
 }

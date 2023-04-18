@@ -18,7 +18,7 @@ def calculate_SVM_params():
 def serve_top_300():
     return send_from_directory('static', 'top-300.csv')
 
-@app.route('/collections', methods=['POST'])
+@app.route('/logs', methods=['POST'])
 def save_cvs():
     PATH = './result/all.csv'
     data = request.json
