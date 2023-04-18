@@ -39,11 +39,11 @@ function appendOptionNode(data, tg_element) {
 }
 
 function appendTableRow(data, tg_element) {
-  const { site, rank, r_time, case_type, label, r_time_two } = data;
+  const { site, rank, r_time, case_type, label, r_time_two, r_bg, r_np } = data;
   const tr = document.createElement("tr");
   tr.setAttribute(
     "data-info",
-    `site=${site},rank=${rank},r_time=${r_time}, r_time_eq2=${r_time_two},case=${case_type},label=${label}`
+    `site=${site},rank=${rank},r_time=${r_time},r_time_eq2=${r_time_two},case=${case_type},label=${label},r_bg=${r_bg},r_np=${r_np}`
   );
   const tds = [, site, rank, r_time, r_time_two, case_type, label];
   for (const item of tds) {
@@ -80,7 +80,8 @@ form.addEventListener("submit", async function (e) {
   const r_time_two = r;
   let case_type = result.getAttribute("data-case");
   let label = result.getAttribute("data-label");
-
+  const r_bg = result.getAttribute("data-r_bg");
+  const r_np = result.getAttribute("data-r_np");
   // const r_np = result.getAttribute("data-r_np");
   // const r_bg = result.getAttribute("data-r_bg");
   // const delta = getDelta(r_bg, r_np);
@@ -103,6 +104,8 @@ form.addEventListener("submit", async function (e) {
     case_type,
     label,
     r_time_two,
+    r_bg,
+    r_np,
   };
   appendTableRow(data, resultTable);
 });
