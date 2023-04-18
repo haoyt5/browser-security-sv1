@@ -10,7 +10,7 @@
 ## Resources
 
 - [Downloading old builds of Chrome / Chromium](https://www.chromium.org/getting-involved/download-chromium/)
-
+  - [Chromium 87 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/812851/)
   - [Chromium 74 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/638880/)
   - [Chromium 72 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/612451/)
 
@@ -52,10 +52,10 @@
 
    ```bash
    export FLASK_APP=get_svm.py TEMPLATES_AUTO_RELOAD=true
-   flask run --debug
+   flask run --debug --host=0.0.0.0 --port=8080
    ```
 
-   3. Visit [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+   3. Visit [http://localhost:8080/](http://localhost:8080/)
 
 ## ChangeLog
 
