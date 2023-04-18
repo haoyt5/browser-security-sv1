@@ -13,7 +13,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--disable-web-security")
 options.add_argument("--disable-site-isolation-trials")
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(executable_path="./data-collection/chromedriver", options=options)
 driver.get(url)
 
 # Wait for the site dropdown to be populated
@@ -27,10 +27,15 @@ sites = site_dropdown.find_elements(By.TAG_NAME, "option")
 
 # Iterate over each site, selecting it and clicking the submit button
 results = []
-for i in range(81,len(sites)):
+for i in range(295,len(sites)):
     site_dropdown = driver.find_element(By.ID, "site")
     site_dropdown.click()
     sites[i].click()
+    
+    time.sleep(1)
+
+    submit_btn = driver.find_element(By.ID, "submit-btn")
+    submit_btn.click()
     
     # Open the selected site in a new tab
     selected_site = sites[i].get_attribute("value")
@@ -49,18 +54,9 @@ for i in range(81,len(sites)):
         driver.switch_to.window(driver.window_handles[0])
         continue
 
-
-    driver.switch_to.window(driver.window_handles[0])
-    
-    submit_btn = driver.find_element(By.ID, "submit-btn")
-    submit_btn.click()
     time.sleep(3)
-    
-    driver.switch_to.window(driver.window_handles[-1])
-
-    # Close the new tab and switch back to the main tab
     driver.close()
-    
+
     driver.switch_to.window(driver.window_handles[0])
 
 
