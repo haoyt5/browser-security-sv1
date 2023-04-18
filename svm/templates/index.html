@@ -12,7 +12,9 @@
     <h3 class="mb-3">Monitor Target</h3>
     <form id="monitor" action="submit">
       <div class="mb-3">
-        foreground tab (FG), in a background tab (BG), or not present (NP)
+        In a background tab (BG),foreground tab (FG), or not present (NP)
+        <br />
+        BG|FG|NP|FG
       </div>
       <div class="mb-3 w-100">
         <h6 class=" text-dark fw-bolder">Baseline</h6>
@@ -38,19 +40,12 @@
             <th scope="col">tg_site</th>
             <th scope="col">rank</th>
             <th scope="col">r_time</th>
+            <th scope="col">r_time_eq2</th>
             <th scope="col">case</th> <!-- (1;2) -->
             <th scope="col">label</th> <!-- (bg/fg; np/fg) -->
           </tr>
         </thead>
         <tbody id="monitor-results">
-          <!-- <tr>
-            <th scope="col">0</th>
-            <td>example.com</td>
-            <td>301</td>
-            <td>{r_time}</td>
-            <td>{case_1}</td>
-            <td>bg</td>
-          </tr> -->
         </tbody>
 
       </table>
