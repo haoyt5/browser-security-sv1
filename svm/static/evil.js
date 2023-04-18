@@ -22,8 +22,8 @@ function appendBaselineResult(text) {
   const textDiv = document.createElement("div");
   textDiv.textContent = text;
   result.setAttribute("data-info", text);
-  result.setAttribute("data-r_bg", text.split(",")[0].split("=")[1]);
-  result.setAttribute("data-r_np", text.split(",")[1].split("=")[1]);
+  result.setAttribute("data-r_bg", text && text.split(",")[0].split("=")[1]);
+  result.setAttribute("data-r_np", text && text.split(",")[1].split("=")[1]);
   result.setAttribute("data-label", "np");
   result.setAttribute("data-case", "0");
   result.appendChild(textDiv);
@@ -253,16 +253,18 @@ async function fetchAndRenderOptions() {
     // fetch top-300
     const response = await fetch("top-300.csv");
     const csv = await response.text();
-    const rows = csv.split("\n");
+    const rows = csv && csv.split("\n");
     let data = [];
 
     for (let i = 0; i <= rows.length; i++) {
-      let cols = rows[i].split(",");
-      const item = await { rank: cols[0], site: cols[1] };
-      // parse csv to js object array
-      data.push(item);
-      // parse csv to append on select
-      appendOptionNode({ rank: cols[0], site: cols[1] }, siteSelect);
+      let cols = rows[i] && rows[i].split(",");
+      if (cols[0] && cols[1]) {
+        const item = await { rank: cols[0], site: cols[1] };
+        // parse csv to js object array
+        data.push(item);
+        // parse csv to append on select
+        appendOptionNode({ rank: cols[0], site: cols[1] }, siteSelect);
+      }
     }
   } catch (error) {
     console.log("error", error);
