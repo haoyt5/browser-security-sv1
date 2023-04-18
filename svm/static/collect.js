@@ -20,7 +20,7 @@ setTimeout(async () => {
   if (R_BG < R_NP) {
     // await collectNP();
     // await collectFG();
-    // await collectBG();
+    await collectBG();
     await collectResults();
   } else {
     location.reload();
@@ -103,7 +103,7 @@ function collectResults() {
         let data = rows[i].getAttribute("data-info");
         await postRecord(data);
       }
-    }, 50000);
+    }, 80000);
     resolve();
   });
 }
