@@ -18,9 +18,9 @@ setTimeout(async () => {
   const R_BG = result.getAttribute("data-r_bg");
   const R_NP = result.getAttribute("data-r_np");
   if (R_BG < R_NP) {
-    await collectNP();
-    await collectFG();
-    await collectBG();
+    // await collectNP();
+    // await collectFG();
+    // await collectBG();
     await collectResults();
   } else {
     location.reload();
@@ -38,19 +38,28 @@ function clickAllOptions() {
   });
 }
 
+function closeTab(opened) {
+  setTimeout(() => {
+    opened.close();
+  }, 300);
+}
 function openTab(url) {
   return new Promise((resolve) => {
     if (url === null) {
-      window.open();
+      console.log("empty");
+      let empty = window.open();
+      empty.focus();
+      closeTab(empty);
       return resolve();
     }
-    window.open(
+    let newWindow = window.open(
       `https://${url}`,
       "_blank",
       "toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes"
     );
-    window.focus();
-    resolve();
+    newWindow.focus();
+    closeTab(newWindow);
+    return resolve();
   });
 }
 function openInNewAndClickAllOptions() {
