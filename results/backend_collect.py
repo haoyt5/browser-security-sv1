@@ -13,7 +13,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("--disable-web-security")
 options.add_argument("--disable-site-isolation-trials")
 
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(executable_path="./data-collection/chromedriver", options=options)
 driver.get(url)
 
 # Wait for the site dropdown to be populated
