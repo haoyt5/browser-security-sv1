@@ -1,5 +1,7 @@
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
+const OPTIONS = siteSelect.options;
+const COUNT = 100;
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -28,25 +30,46 @@ setTimeout(async () => {
   if (R_BG < R_NP) {
     // FEATURE: Collect Script
     // await collectNP();
-    // await sleep(500);
+    // await sleep(COUNT * 1250);
+    // await collectResults();
+    // await sleep(COUNT * 1250);
+    // await cleanResults();
+    // await sleep(8000);
     // await collectFG();
-    // await sleep(500);
+    // await sleep(COUNT * 1250);
+    // await collectResults();
+    // await sleep(COUNT * 3250);
+    // await cleanResults();
+    // await sleep(8000);
     // await collectBG();
-    // await sleep(500);
-    // console.log("Start To Collect");
+    // await sleep(COUNT * 20 * 1000);
     // await collectResults();
   } else {
     location.reload();
   }
 }, 3000);
 
-function clickAllOptions() {
+function clickEverySecond() {
   return new Promise((resolve) => {
+    let i = 0;
     const options = siteSelect.options;
-    for (let i = 0; i < options.length; i++) {
-      siteSelect.value = siteSelect.options[i].value;
-      submitButton.click();
-    }
+    const setAndClick = () => {
+      if (i < COUNT) {
+        siteSelect.value = siteSelect.options[i].value;
+        submitButton.click();
+        i++;
+      } else {
+        clearInterval(intervalId);
+      }
+    };
+    const intervalId = setInterval(setAndClick, 1000);
+    resolve();
+  });
+}
+
+function clickAllOptions() {
+  return new Promise(async (resolve) => {
+    await clickEverySecond();
     resolve();
   });
 }
@@ -60,15 +83,26 @@ function closeTab(opened) {
   });
 }
 
+function openAndFocus(url) {
+  return new Promise((resolve) => {
+    const tab = window.open(`https://${url}`, "_blank");
+    setTimeout(() => {
+      tab.focus();
+    }, 100);
+    resolve();
+    return tab;
+  });
+}
+
 function openTab(url) {
   return new Promise(async (resolve) => {
     if (url === null) {
-      let empty = window.open();
+      const empty = window.open();
       empty.focus();
       await closeTab(empty);
       return resolve();
     }
-    let newWindow = window.open(
+    const newWindow = window.open(
       `https://${url}`,
       "_blank",
       "toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes"
@@ -78,48 +112,81 @@ function openTab(url) {
     return resolve();
   });
 }
+function fireEverySecond(f) {
+  return new Promise((resolve) => {
+    let i = 0;
+    const options = siteSelect.options;
+    const setAndClick = () => {
+      if (i < COUNT) {
+        f(i);
+        i++;
+      } else {
+        clearInterval(intervalId);
+      }
+    };
+    const intervalId = setInterval(setAndClick, 1000);
+    resolve();
+  });
+}
+
 function openInNewAndClickAllOptions() {
   return new Promise(async (resolve) => {
-    const options = siteSelect.options;
-    for (let i = 0; i < options.length; i++) {
-      let url = options[i].value;
-      setTimeout(async () => {
-        await openTab(url);
-        siteSelect.value = siteSelect.options[i].value;
-        submitButton.click();
-      }, 800);
-    }
-
+    // const options = siteSelect.options;
+    // for (let i = 0; i < 50; i++) {
+    //   let url = options[i].value;
+    //   setTimeout(async () => {
+    //     await openTab(url);
+    //     siteSelect.value = siteSelect.options[i].value;
+    //     submitButton.click();
+    //   }, 800);
+    // }
+    const fire = async (i) => {
+      await openTab(siteSelect.options[i].value);
+      siteSelect.value = siteSelect.options[i].value;
+      submitButton.click();
+    };
+    await fireEverySecond(fire);
     resolve();
   });
 }
 
 function openInNewAndEmptyClickAllOptions() {
   return new Promise(async (resolve) => {
-    const options = siteSelect.options;
-    for (let i = 0; i < options.length; i++) {
-      let url = options[i].value;
-      setTimeout(async () => {
-        await openTab(url);
-        await openTab(null);
-        siteSelect.value = siteSelect.options[i].value;
-        submitButton.click();
-      }, 800);
-    }
+    // const options = siteSelect.options;
+    // for (let i = 0; i < 50; i++) {
+    //   let url = options[i].value;
+    //   setTimeout(async () => {
+    //     await openTab(url);
+    //     await openTab(null);
+    //     siteSelect.value = siteSelect.options[i].value;
+    //     submitButton.click();
+    //   }, 800);
+    // }
+    const fire = async (i) => {
+      await openTab(siteSelect.options[i].value);
+      await openTab(null);
+      siteSelect.value = siteSelect.options[i].value;
+      submitButton.click();
+    };
+    fireEverySecond(fire);
+    resolve();
+  });
+}
+function cleanResults() {
+  return new Promise((resolve) => {
+    console.log(resultTable);
+    resultTable.innerHTML = "";
     resolve();
   });
 }
 
 function collectResults() {
-  return new Promise((resolve) => {
-    const wait = 3 * 60 * 1000;
-    setTimeout(async () => {
-      const rows = monitorResultTable.getElementsByTagName("tr");
-      for (let i = 0; i < rows.length; i++) {
-        let data = rows[i].getAttribute("data-info");
-        await postRecord(data);
-      }
-    }, wait);
+  return new Promise(async (resolve) => {
+    const rows = monitorResultTable.getElementsByTagName("tr");
+    for (let i = 0; i < rows.length; i++) {
+      let data = rows[i].getAttribute("data-info");
+      await postRecord(data);
+    }
     resolve();
   });
 }
