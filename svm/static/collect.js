@@ -1,7 +1,7 @@
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
 const OPTIONS = siteSelect.options;
-const COUNT = 100;
+const COUNT = 2;
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -34,15 +34,15 @@ setTimeout(async () => {
     // await collectResults();
     // await sleep(COUNT * 1250);
     // await cleanResults();
-    // await sleep(8000);
+    // await sleep(5000);
     // await collectFG();
     // await sleep(COUNT * 1250);
     // await collectResults();
-    // await sleep(COUNT * 3250);
+    // await sleep(COUNT * 2250);
     // await cleanResults();
-    // await sleep(8000);
+    // await sleep(5000);
     // await collectBG();
-    // await sleep(COUNT * 20 * 1000);
+    // await sleep(COUNT * 1 * 1250);
     // await collectResults();
   } else {
     location.reload();

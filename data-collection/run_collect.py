@@ -2,28 +2,26 @@
 # import os
 import time
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
 
-# SERVICE_PATH = "./chromedriver"
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
-
+CHROMIUM_DRIVER_PATH = './chromedriver'
 if __name__ == "__main__":
-    options = Options()
-    options.add_argument('binary_location={}'.format(CHROMIUM_PATH))
-    driver = webdriver.Chrome(options=options)
+    chrome_options = Options()
+    # chrome_options.add_argument('--disable-extensions')
+    # chrome_options.add_argument('--headless')
+    # chrome_options.add_argument('--disable-gpu')
+    chrome_options.binary_location = CHROMIUM_PATH
+    
+    chrome_driver_path = CHROMIUM_DRIVER_PATH
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service,options=chrome_options)
+
     # open attacker website
     driver.get("http://localhost:8080")
-    time.sleep(8)
+    # time.sleep(8)
     # open with particular
-    # options = Options()
-    # options.add_argument('binary_location={}'.format(CHROMIUM_PATH))
-    # # options.add_argument("--disable-dev-shm-usage")
-    # # chrome_service = Service(executable_path=CHROMIUM_PATH)
-    # driver = webdriver.Chrome(service=chrome_service,options=options)
-    # # open attacker website
-    # driver.get("http://localhost:8080/")
-    # driver.get("google.com")
-    # time.sleep(3)
+
     driver.quit()
