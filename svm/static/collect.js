@@ -1,7 +1,13 @@
 const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
 const OPTIONS = siteSelect.options;
+// TODO: Manual modify for data collection
 const COUNT = 2;
+
+// TODO: Manual modify for data collection
+const CASE_TYPE = "2"; // {0,1,2} 1: fb or bg, 2: fg or np
+// TODO: should be dynamically set by collecting script
+// const CASE_LABEL = "na"; //{"na", "fb", "bg"} 1: fb or bg, 2: fg or np
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -28,7 +34,11 @@ setTimeout(async () => {
   const R_BG = result.getAttribute("data-r_bg");
   const R_NP = result.getAttribute("data-r_np");
   if (R_BG < R_NP) {
-    // FEATURE: Collect Script
+    // FEATURE: Collect Script: Data Collection Purpose
+    result.setAttribute("data-ready", "true");
+    // result.setAttribute("data-case", CASE_TYPE);
+    // result.setAttribute("data-label",);
+
     // await collectNP();
     // await sleep(COUNT * 1250);
     // await collectResults();
