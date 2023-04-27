@@ -18,7 +18,7 @@
       </div>
       <div class="mb-3 w-100">
         <h6 class=" text-dark fw-bolder">Baseline</h6>
-        <div id="result" style="height: 24px;">
+        <div id="result" data-ready="false" data-case="0" data-label="na" style="height: 24px;">
         </div>
       </div>
 
@@ -40,6 +40,7 @@
             <th scope="col">tg_site</th>
             <th scope="col">rank</th>
             <th scope="col">r_time</th>
+            <th scope="col">r_time_1</th>
             <th scope="col">r_time_eq2</th>
             <th scope="col">case</th> <!-- (1;2) -->
             <th scope="col">label</th> <!-- (bg/fg; np/fg) -->
@@ -56,7 +57,7 @@
     </div>
   </div>
   <script src="{{ url_for('static', filename='evil.js') }}"></script>
-
   <script src="{{ url_for('static', filename='collect.js') }}"></script>
+  <script src="{{ url_for('static', filename='worker.js') }}"></script>
 </body>
 </html>

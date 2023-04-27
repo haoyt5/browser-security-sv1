@@ -5,8 +5,11 @@ const submit_button = document.getElementById("submit-btn");
 const resultTable = document.getElementById("monitor-results");
 const siteSelect = document.getElementById("site");
 
+const CPU_NUM = window.navigator.hardwareConcurrency;
+
 const ref_site_1 = "https://sv.cmu.edu:1";
 const ref_site_2 = "https://getbootstrap.com:1";
+const helper_site = "https://dribbble.com";
 
 function getDelta(r_bg, r_np) {
   console.log(r_bg, r_np, (r_np - r_bg) / 10);
@@ -18,14 +21,13 @@ function appendTextNode(text, element) {
   textNode.textContent = text;
   element.appendChild(textNode);
 }
+
 function appendBaselineResult(text) {
   const textDiv = document.createElement("div");
   textDiv.textContent = text;
   result.setAttribute("data-info", text);
   result.setAttribute("data-r_bg", text && text.split(",")[0].split("=")[1]);
   result.setAttribute("data-r_np", text && text.split(",")[1].split("=")[1]);
-  result.setAttribute("data-label", "np");
-  result.setAttribute("data-case", "0");
   result.appendChild(textDiv);
 }
 
@@ -39,13 +41,23 @@ function appendOptionNode(data, tg_element) {
 }
 
 function appendTableRow(data, tg_element) {
-  const { site, rank, r_time, case_type, label, r_time_two, r_bg, r_np } = data;
+  const {
+    site,
+    rank,
+    r_time,
+    case_type,
+    label,
+    r_time_one,
+    r_time_two,
+    r_bg,
+    r_np,
+  } = data;
   const tr = document.createElement("tr");
   tr.setAttribute(
     "data-info",
     `site=${site},rank=${rank},r_time=${r_time},r_time_eq2=${r_time_two},case=${case_type},label=${label},r_bg=${r_bg},r_np=${r_np}`
   );
-  const tds = [, site, rank, r_time, r_time_two, case_type, label];
+  const tds = [, site, rank, r_time, r_time_one, r_time_two, case_type, label];
   for (const item of tds) {
     let td = document.createElement("td");
     td.textContent = item;
@@ -72,18 +84,55 @@ window.addEventListener("DOMContentLoaded", async function (event) {
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
+  let r_time_one = "na";
+  let r_time_two = "na";
+
   const vtm_site = form.site.value;
   const vtm_option = form.site.options[form.site.selectedIndex];
   const vtm_rank = vtm_option.getAttribute("data-rank");
   const { r: r_vtm } = await equation_one(vtm_site);
-  const { r } = await equation_two(vtm_site);
-  const r_time_two = r;
+
   let case_type = result.getAttribute("data-case");
   let label = result.getAttribute("data-label");
   const r_bg = result.getAttribute("data-r_bg");
   const r_np = result.getAttribute("data-r_np");
-  // const r_np = result.getAttribute("data-r_np");
-  // const r_bg = result.getAttribute("data-r_bg");
+
+  /*
+  (*) 2nd Run Case 1: data-case=1, data-label={fg or bg}, r_time_1={} ,r_time_eq2='na'
+
+  case_type = 1
+  result.setAttribute('data-case', "1")
+  result.setAttribute('data-label', fg/bg)
+
+  let workers = CPU_NUM - 1;
+  await create_invisible_iframe(helper_site, workers)
+  const case_one_second_run = await equation_one(vtm_site);
+  r_time_1 = case_one_second_run.r
+  */
+
+  case_type = 1;
+  result.setAttribute("data-case", "1");
+  // result.setAttribute("data-label", fg / bg);
+
+  let workers = CPU_NUM - 1;
+  await create_invisible_iframe(helper_site, workers);
+  const case_one_second_run = await equation_one(vtm_site);
+  r_time_1 = case_one_second_run.r;
+
+  /*
+  (*) 2nd Run Case 2: data-case=2, data-label={fg or np}, r_time_1='na' ,r_time_eq2={}
+  
+  case_type = 2
+  result.setAttribute('data-case', "2")
+  result.setAttribute('data-label', fg/bg)
+  const eq_twp = await equation_two(vtm_site);
+  r_time_two = eq_twp.r;
+  
+  */
+
+  const eq_twp = await equation_two(vtm_site);
+  r_time_two = eq_twp.r;
+
   // const delta = getDelta(r_bg, r_np);
   // console.log("Math.abs(r_bg - r_np)", Math.abs(r_bg - r_np));
   // console.log("Math.abs(r_vtm - r_bg)", Math.abs(r_vtm - r_bg));
@@ -103,7 +152,8 @@ form.addEventListener("submit", async function (e) {
     r_time: r_vtm,
     case_type,
     label,
-    r_time_two,
+    r_time_one, // for case 1
+    r_time_two, // for case 2
     r_bg,
     r_np,
   };
@@ -178,18 +228,6 @@ async function equation_two(tg_url) {
 
   r = (vtm_t_2 - vtm_t) / vtm_t;
 
-  // console.log(
-  //   "[equation_two]: {time_0, time_ref, time_vtm, time_vtm_2,vtm_t , vtm_t_2, r}",
-  //   {
-  //     time_0,
-  //     time_ref,
-  //     time_vtm,
-  //     time_vtm_2,
-  //     vtm_t,
-  //     vtm_t_2,
-  //     r,
-  //   }
-  // );
   return { time_0, time_ref, time_vtm, r };
 }
 
@@ -208,10 +246,37 @@ async function load_baseline_result() {
   return { r_np, r_bg };
 }
 
-function create_invisible_iframe(id) {
-  const inv_iframe = document.createElement("iframe");
-  inv_iframe.setAttribute("id", id);
-  invisible_div.appendChild(inv_iframe);
+function generate_js_workers(numOfWorkers, task) {
+  if (numOfWorkers === 0) return;
+  let workers = [];
+  // const workerCode = generateWorkerCode();
+  for (let i = 0; i < numOfWorkers; i++) {
+    const worker = new Worker("worker.js");
+    // worker.onmessage = function (event) {
+    //   console.log("Worker " + i + " completed task:", event.data);
+    // };
+    // worker.onerror = function (event) {
+    //   console.error("Worker " + i + " encountered an error:", event);
+    // };
+    worker.postMessage(task);
+    workers.push(worker);
+  }
+  return workers;
+}
+
+// function generate_worker_code() {}
+
+async function create_invisible_iframe(id, workers = 0) {
+  return new Promise((resolve) => {
+    const inv_iframe = document.createElement("iframe");
+    inv_iframe.setAttribute("id", `${id}-${i}`);
+    invisible_div.appendChild(inv_iframe);
+    if (workers > 0) {
+      const task = 1;
+      const workers = generate_js_workers(workers, task);
+    }
+    resolve();
+  });
 }
 
 /*
@@ -224,6 +289,7 @@ function loadURLonFrame(url, frame) {
     resolve();
   });
 }
+
 function awaitReset() {
   return new Promise((resolve) => {
     invisible_div.innerHTML = "";
