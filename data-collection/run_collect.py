@@ -5,6 +5,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support import expected_conditions as EC
 # import sys
 # import os
 # import threading
@@ -22,11 +24,11 @@ def check_ready(driver):
     wait.until(lambda x: x.find_element(By.CSS_SELECTOR, '[data-ready="true"]'))
     return True
    
-def collect_fg(driver):
+def collect_fg(driver, site_select,submit_button):
     # set data-label to np, and set to 
     set_data_label_attribute(driver=driver, label='fg')
     time.sleep(1)
-    exit()
+    open_in_new_and_switch_fg_and_close(driver=driver, site_select=site_select,submit_button=submit_button)
     
 def collect_np(driver, site_select, submit_button):
     # set data-label to np, and set to 
@@ -69,10 +71,36 @@ def click_every_second(driver, site_select, submit_button):
         sites = site_dropdown.find_elements(By.TAG_NAME, "option")
         site_dropdown.click()
         sites[i].click()
-        print("click")
         submit_button.click()     
-        time.sleep(0.5)
-    
+        time.sleep(1)
+        
+def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
+    i = 0
+    for i in range(COUNT):
+        site_dropdown = site_select
+        sites = site_dropdown.find_elements(By.TAG_NAME, "option")
+        site_dropdown.click()
+        sites[i].click()
+        submit_button.click()
+        # Open the selected site in a new tab
+        selected_site = sites[i].get_attribute("value")
+        selected_site = "https://" + selected_site.lstrip('/')
+        driver.execute_script(f"window.open('{selected_site}', '_blank');")
+        # Switch to the new tab
+        driver.switch_to.window(driver.window_handles[-1])
+        try:
+            WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
+        except TimeoutException:
+            print(f"Timeout while waiting for {selected_site} to load.")
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+            continue 
+        
+        time.sleep(3)
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0]) 
+        
+        
 def main():
     driver = init_driver()
     
@@ -95,14 +123,14 @@ def main():
         collect_np(driver=driver, site_select=site_select, submit_button=submit_button)  
         print("collect np end")
         time.sleep(2)   
-         # TODO:Collect FG
-        # collect_fg()
-        # time.sleep(2)
+        # Collect FG
+        collect_fg(driver=driver, site_select=site_select, submit_button=submit_button)
+        time.sleep(2)
         print("collect results start")
         collect_results(monitor_result_table=monitor_result_table)
         print("collect results end")
         time.sleep(2)
-        # driver.quit()
+        driver.quit()
         
     # time.sleep(8)
     # open with particular
