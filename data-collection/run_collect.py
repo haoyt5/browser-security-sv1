@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
 CHROMIUM_DRIVER_PATH = './chromedriver'
+WAIT_INTERVAL = 2
 COUNT = 50
 
 def check_ready(driver):
@@ -72,7 +73,7 @@ def click_every_second(driver, site_select, submit_button):
         site_dropdown.click()
         sites[i].click()
         submit_button.click()     
-        time.sleep(3)
+        time.sleep(WAIT_INTERVAL)
         
 def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
     i = 0
@@ -96,10 +97,10 @@ def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
             driver.switch_to.window(driver.window_handles[0])
             continue 
         
-        time.sleep(3)
+        time.sleep(WAIT_INTERVAL)
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
-        time.sleep(3)
+        time.sleep(WAIT_INTERVAL)
 
         
 def open_in_new_and_switch_bg_and_close(driver, site_select, submit_button):
@@ -128,13 +129,13 @@ def open_in_new_and_switch_bg_and_close(driver, site_select, submit_button):
         # Switch to the monitor tab
         driver.switch_to.window(driver.window_handles[0])
         submit_button.click()
-        time.sleep(3)
+        time.sleep(WAIT_INTERVAL)
         
         # Close the new tab and switch back to the main tab
         driver.switch_to.window(driver.window_handles[-1])
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
-        time.sleep(3)  
+        time.sleep(WAIT_INTERVAL)  
         
         
 def main():
@@ -206,7 +207,7 @@ def main():
         print("collect results start")
         collect_results(monitor_result_table=monitor_result_table)
         print("collect results end")
-        time.sleep(3)
+        time.sleep(WAIT_INTERVAL)
         
         driver.quit()
         # Get the current time after executing the code
