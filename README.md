@@ -70,19 +70,9 @@ Functions (based on p5 Listing2: The attack algorithm in pseudo code):
 
 ## How to conduct the data collection script
 
-1. Download ChromeDriver from https://chromedriver.storage.googleapis.com/index.html?path=72.0.3626.69/. Download the version 72
-
-2. Extract the "chromedriver" executable and put it somewhere (for example,
-   the current directory). If running Mac OS, you will need to allow this
-   executable to run in the security settings since it is unsigned.
-3. Add the directory containing the "chromedriver" executable to
-   your PATH. If you put it in the current directory, then you can use the
-   following the commands to do this:
-
-   - In bash/zsh: `export PATH=$PWD:$PATH`
-   - In Windows cmd.exe: `set PATH=%CD%;%PATH%`
-   - e.g. `export PATH=$PWD:$PATH`
-
+1. Download Chromium [Chromium 87 for Mac](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Mac/812851/).
+2. Update the `CHROMIUM_PATH` in `run_collect_py`
+3. Update the `COUNT` to decide how many site to iterate through
 4. Assuming you have Python 3 installed, create a virtual environment and
    install the Python dependencies:
 
