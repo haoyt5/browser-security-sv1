@@ -16,7 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
 CHROMIUM_DRIVER_PATH = './chromedriver'
-COUNT = 300
+COUNT = 50
 
 def check_ready(driver):
     # check data-ready is "true"
