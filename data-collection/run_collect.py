@@ -7,12 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
-# import sys
-# import os
-# import threading
-# from selenium.webdriver.support.ui import Select
-# import asyncio
-# from aioselenium import Remote
 
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
 CHROMIUM_DRIVER_PATH = './chromedriver'

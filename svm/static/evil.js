@@ -55,7 +55,7 @@ function appendTableRow(data, tg_element) {
   const tr = document.createElement("tr");
   tr.setAttribute(
     "data-info",
-    `site=${site},rank=${rank},r_time=${r_time},r_time=${r_time_one},r_time_eq2=${r_time_two},case=${case_type},label=${label},r_bg=${r_bg},r_np=${r_np}`
+    `site=${site},rank=${rank},r_time=${r_time},r_time_1=${r_time_one},r_time_eq2=${r_time_two},case=${case_type},label=${label},r_bg=${r_bg},r_np=${r_np}`
   );
   const tds = [, site, rank, r_time, r_time_one, r_time_two, case_type, label];
   for (const item of tds) {
