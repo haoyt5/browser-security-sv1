@@ -7,11 +7,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchWindowException
 
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
 CHROMIUM_DRIVER_PATH = './chromedriver'
 WAIT_INTERVAL = 2
-COUNT = 50
+COUNT = 3
 
 def check_ready(driver):
     # check data-ready is "true"
@@ -72,7 +73,8 @@ def click_every_second(driver, site_select, submit_button):
         sites = site_dropdown.find_elements(By.TAG_NAME, "option")
         site_dropdown.click()
         sites[i].click()
-        submit_button.click()     
+        submit_button.click() 
+        print(f"np: {sites[i].text} to load")    
         time.sleep(WAIT_INTERVAL)
         
 def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
@@ -82,20 +84,27 @@ def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
         sites = site_dropdown.find_elements(By.TAG_NAME, "option")
         site_dropdown.click()
         sites[i].click()
+        # Start to monitor
         submit_button.click()
         # Open the selected site in a new tab
         selected_site = sites[i].get_attribute("value")
         selected_site = "https://" + selected_site.lstrip('/')
         driver.execute_script(f"window.open('{selected_site}', '_blank');")
+        print(f"fg: {selected_site} to load")
         # Switch to the new tab
         driver.switch_to.window(driver.window_handles[-1])
+    
         try:
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
-        except TimeoutException:
-            print(f"Timeout while waiting for {selected_site} to load.")
-            driver.close()
-            driver.switch_to.window(driver.window_handles[0])
-            continue 
+        except TimeoutException as e:
+            print(f"Error while waiting for {selected_site} to load.: {e}")
+            try:            
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+            except NoSuchWindowException:
+                time.sleep(WAIT_INTERVAL)
+                pass
+            continue
         
         time.sleep(WAIT_INTERVAL)
         driver.close()
@@ -120,11 +129,15 @@ def open_in_new_and_switch_bg_and_close(driver, site_select, submit_button):
         driver.switch_to.window(driver.window_handles[-1])
         try:
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
+            print(f"bg: {selected_site} to load")
         except TimeoutException:
             print(f"Timeout while waiting for {selected_site} to load.")
-            driver.close()
-            driver.switch_to.window(driver.window_handles[0])
-            continue 
+            try:
+                driver.close()
+                driver.switch_to.window(driver.window_handles[0])
+            except NoSuchWindowException:
+                pass
+            continue
         
         # Switch to the monitor tab
         driver.switch_to.window(driver.window_handles[0])
@@ -137,7 +150,7 @@ def open_in_new_and_switch_bg_and_close(driver, site_select, submit_button):
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(WAIT_INTERVAL)  
         
-        
+
 def main():
     driver = init_driver()
     # Get the current time before executing the code
