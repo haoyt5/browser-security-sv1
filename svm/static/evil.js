@@ -84,6 +84,9 @@ window.addEventListener("DOMContentLoaded", async function (event) {
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
+  // TODO: for monitoring
+  submit_button.setAttribute("disabled", "true");
+
   let r_time_one = "na";
   let r_time_two = "na";
 
@@ -109,29 +112,27 @@ form.addEventListener("submit", async function (e) {
   const case_one_second_run = await equation_one(vtm_site);
   r_time_1 = case_one_second_run.r
   */
-
-  case_type = 1;
-  result.setAttribute("data-case", "1");
-  // result.setAttribute("data-label", fg / bg);
-
-  let workers = CPU_NUM - 1;
-  await create_invisible_iframe(helper_site, workers);
-  const case_one_second_run = await equation_one(vtm_site);
-  r_time_1 = case_one_second_run.r;
+  if (case_type === "1") {
+    let workers = CPU_NUM - 1;
+    await create_invisible_iframe(helper_site, workers);
+    const case_one_second_run = await equation_one(vtm_site);
+    r_time_one = case_one_second_run.r;
+  }
 
   /*
   (*) 2nd Run Case 2: data-case=2, data-label={fg or np}, r_time_1='na' ,r_time_eq2={}
   
   case_type = 2
   result.setAttribute('data-case', "2")
-  result.setAttribute('data-label', fg/bg)
+  result.setAttribute('data-label', fg/np)
   const eq_twp = await equation_two(vtm_site);
   r_time_two = eq_twp.r;
   
   */
-
-  const eq_twp = await equation_two(vtm_site);
-  r_time_two = eq_twp.r;
+  if (case_type === "2") {
+    const eq_twp = await equation_two(vtm_site);
+    r_time_two = eq_twp.r;
+  }
 
   // const delta = getDelta(r_bg, r_np);
   // console.log("Math.abs(r_bg - r_np)", Math.abs(r_bg - r_np));
@@ -158,6 +159,8 @@ form.addEventListener("submit", async function (e) {
     r_np,
   };
   appendTableRow(data, resultTable);
+  // TODO: for monitoring
+  submit_button.removeAttribute("disabled");
 });
 
 async function equation_one(tg_url) {
@@ -251,13 +254,13 @@ function generate_js_workers(numOfWorkers, task) {
   let workers = [];
   // const workerCode = generateWorkerCode();
   for (let i = 0; i < numOfWorkers; i++) {
-    const worker = new Worker("worker.js");
-    // worker.onmessage = function (event) {
-    //   console.log("Worker " + i + " completed task:", event.data);
-    // };
-    // worker.onerror = function (event) {
-    //   console.error("Worker " + i + " encountered an error:", event);
-    // };
+    const worker = new Worker("/static/worker.js");
+    worker.onmessage = function (event) {
+      console.log("Worker " + i + " completed task:", event.data);
+    };
+    worker.onerror = function (event) {
+      console.error("Worker " + i + " encountered an error:", event);
+    };
     worker.postMessage(task);
     workers.push(worker);
   }
@@ -266,14 +269,14 @@ function generate_js_workers(numOfWorkers, task) {
 
 // function generate_worker_code() {}
 
-async function create_invisible_iframe(id, workers = 0) {
+async function create_invisible_iframe(id, numOfWorkers = 0) {
   return new Promise((resolve) => {
     const inv_iframe = document.createElement("iframe");
-    inv_iframe.setAttribute("id", `${id}-${i}`);
+    inv_iframe.setAttribute("id", `${id}`);
     invisible_div.appendChild(inv_iframe);
-    if (workers > 0) {
+    if (numOfWorkers > 0) {
       const task = 1;
-      const workers = generate_js_workers(workers, task);
+      generate_js_workers(numOfWorkers, task);
     }
     resolve();
   });

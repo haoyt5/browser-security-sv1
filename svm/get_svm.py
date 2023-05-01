@@ -33,6 +33,9 @@ def save_cvs():
     f.close()
     return data
 
+@app.route('/static/<path:path>')
+def serve_js(path):
+    return send_from_directory('static', path)
 
 @app.route('/')
 def index():
