@@ -8,11 +8,12 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchWindowException
+from selenium.common.exceptions import WebDriverException
 
 CHROMIUM_PATH = '/Applications/Chromium-87.app/Contents/MacOS/Chromium'
 CHROMIUM_DRIVER_PATH = './chromedriver'
-WAIT_INTERVAL = 2
-COUNT = 3
+WAIT_INTERVAL = 3
+COUNT = 50
 
 def check_ready(driver):
     # check data-ready is "true"
@@ -101,9 +102,18 @@ def open_in_new_and_switch_fg_and_close(driver, site_select, submit_button):
             try:            
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
-            except NoSuchWindowException:
+            except Exception as e:
                 time.sleep(WAIT_INTERVAL)
+                driver.refresh()
+                print(f"Cannot close tab: {e}")
                 pass
+                continue
+            continue
+        except NoSuchWindowException as e:
+            print(f"No such window: {e}")
+            continue
+        except WebDriverException as e:
+            print(f"WebDriverError: {e}")
             continue
         
         time.sleep(WAIT_INTERVAL)
@@ -130,13 +140,22 @@ def open_in_new_and_switch_bg_and_close(driver, site_select, submit_button):
         try:
             WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "body")))
             print(f"bg: {selected_site} to load")
-        except TimeoutException:
-            print(f"Timeout while waiting for {selected_site} to load.")
+        except TimeoutException as e:
+            print(f"Timeout while waiting for {selected_site} to load.{e}")
             try:
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
-            except NoSuchWindowException:
+            except Exception as e:
+                driver.refresh()
+                print(f"Cannot close tab: {e}")
                 pass
+                continue
+            continue
+        except NoSuchWindowException as e:
+            print(f"No such window: {e}")
+            continue
+        except WebDriverException as e:
+            print(f"WebDriverError: {e}")
             continue
         
         # Switch to the monitor tab
@@ -229,7 +248,6 @@ def main():
         execution_time_seconds = end_time - start_time
         # Convert to minutes
         execution_time_minutes = execution_time_seconds / 60
-
         print(f"Execution time: {execution_time_minutes:.2f} minutes")
 
             
