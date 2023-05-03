@@ -79,13 +79,14 @@ window.addEventListener("DOMContentLoaded", async function (event) {
 
   const baseline = `r_bg=${r_bg},r_np=${r_np}`;
   appendBaselineResult(baseline);
+  // TODO: for monitoring
   submit_button.removeAttribute("disabled");
 });
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
   // TODO: for monitoring
-  submit_button.setAttribute("disabled", "true");
+  // submit_button.setAttribute("disabled", "true");
 
   let r_time_one = "na";
   let r_time_two = "na";
@@ -160,7 +161,7 @@ form.addEventListener("submit", async function (e) {
   };
   appendTableRow(data, resultTable);
   // TODO: for monitoring
-  submit_button.removeAttribute("disabled");
+  // submit_button.removeAttribute("disabled");
 });
 
 async function equation_one(tg_url) {
@@ -222,8 +223,11 @@ async function equation_two(tg_url) {
   });
   tg_frame.setAttribute("src", "");
   tg_frame_2.setAttribute("src", "");
+
   tg_frame.setAttribute("src", tg_url);
   tg_frame_2.setAttribute("src", tg_url);
+  // await loadURLonFrame(tg_url, tg_frame);
+  // await loadURLonFrame(tg_url, tg_frame_2);
   await awaitEvent(tg_frame, "load");
   await awaitEvent(tg_frame_2, "load");
   vtm_t = time_vtm - time_ref;
