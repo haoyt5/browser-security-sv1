@@ -2,7 +2,7 @@ const submitButton = document.getElementById("submit-btn");
 const monitorResultTable = document.getElementById("monitor-results");
 const OPTIONS = siteSelect.options;
 // TODO: Manual modify for data collection
-const COUNT = 2;
+const COUNT = 50;
 
 // TODO: Manual modify for data collection
 const CASE_TYPE = "2"; // {0,1,2} 1: fb or bg, 2: fg or np
@@ -35,17 +35,39 @@ setTimeout(async () => {
   const R_NP = result.getAttribute("data-r_np");
   if (R_BG < R_NP) {
     // FEATURE: Collect Script: Data Collection Purpose
-    result.setAttribute("data-ready", "true");
-    // result.setAttribute("data-case", CASE_TYPE);
-    // result.setAttribute("data-label",);
 
-    // await collectNP();
-    // await sleep(COUNT * 1250);
+    // await sleep(3000);
+
+    result.setAttribute("data-case", "2");
+    result.setAttribute("data-label", "np");
+    await sleep(2000);
+    await collectNP();
+
+    result.setAttribute("data-ready", "true");
+
+    // result.setAttribute("data-label", "fg");
+    // await sleep(2000);
+    // await collectFG();
+    // await sleep(5000);
+
+    // result.setAttribute("data-case", "1");
+    // await sleep(2000);
+
+    // result.setAttribute("data-label", "bg");
+    // await sleep(2000);
+    // await collectBG();
+    // await sleep(5000);
+
+    // result.setAttribute("data-label", "fg");
+    // await sleep(2000);
+    // await collectFG();
+    // await sleep(5000);
+
     // await collectResults();
+
     // await sleep(COUNT * 1250);
     // await cleanResults();
     // await sleep(5000);
-    // await collectFG();
     // await sleep(COUNT * 1250);
     // await collectResults();
     // await sleep(COUNT * 2250);
@@ -72,7 +94,7 @@ function clickEverySecond() {
         clearInterval(intervalId);
       }
     };
-    const intervalId = setInterval(setAndClick, 1000);
+    const intervalId = setInterval(setAndClick, 1750);
     resolve();
   });
 }
