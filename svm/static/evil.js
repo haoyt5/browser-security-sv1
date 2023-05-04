@@ -94,6 +94,7 @@ form.addEventListener("submit", async function (e) {
   const vtm_site = form.site.value;
   const vtm_option = form.site.options[form.site.selectedIndex];
   const vtm_rank = vtm_option.getAttribute("data-rank");
+  await awaitReset();
   const { r: r_vtm } = await equation_one(vtm_site);
 
   let case_type = result.getAttribute("data-case");
@@ -115,6 +116,7 @@ form.addEventListener("submit", async function (e) {
   */
   if (case_type === "1") {
     let workers = CPU_NUM - 1;
+    await awaitReset();
     await create_invisible_iframe(helper_site, workers);
     const case_one_second_run = await equation_one(vtm_site);
     r_time_one = case_one_second_run.r;
@@ -131,6 +133,7 @@ form.addEventListener("submit", async function (e) {
   
   */
   if (case_type === "2") {
+    await awaitReset();
     const eq_twp = await equation_two(vtm_site);
     r_time_two = eq_twp.r;
   }
